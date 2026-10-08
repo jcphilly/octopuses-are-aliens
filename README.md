@@ -16,6 +16,17 @@ Open `index.html` through GitHub Pages: **Settings → Pages → Deploy from a b
 | `Space` | Play or pause narration |
 | `F` or the ⛶ button | Full screen. Controls hide after 2.5 seconds; move the mouse to bring them back. Double-click the slide also works. |
 
+## Downloads
+
+The **Download** menu offers four zipped versions. None include audio.
+
+| File | Contents |
+| --- | --- |
+| `downloads/Octopuses-Are-Aliens-PowerPoint.zip` | `.pptx`, 16:9, narration script in the speaker notes |
+| `downloads/Octopuses-Are-Aliens-PDF.zip` | 19-page PDF |
+| `downloads/Octopuses-Are-Aliens-PNG.zip` | 19 PNGs, 1920 × 1080 |
+| `downloads/Octopuses-Are-Aliens-Web-Page.zip` | One self-contained `.html` file that works offline, with a notes panel (`N`) |
+
 ## Perform it live
 
 1. Open the page and click **Present live**. The presenter view opens in a second window.

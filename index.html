@@ -108,6 +108,21 @@ section.sources p{font-size:15px;color:#C9D6DE;margin-bottom:10px}
   .nav span{width:40px;height:40px}
   section.sources{grid-template-columns:1fr}
 }
+/* Download menu */
+.head-right{display:flex;align-items:flex-end;gap:20px}
+.dl{position:relative}
+.dl summary{list-style:none;display:flex;align-items:center;gap:8px;cursor:pointer;font-family:var(--mono);font-weight:700;font-size:12px;letter-spacing:.12em;text-transform:uppercase;padding:10px 14px;border:1px solid var(--cream);color:var(--cream);white-space:nowrap}
+.dl summary::-webkit-details-marker{display:none}
+.dl summary:hover,.dl[open] summary{background:var(--cream);color:var(--ink)}
+.dl summary svg{width:16px;height:16px;fill:none;stroke:currentColor;stroke-width:2.2}
+.dl-menu{position:absolute;right:0;top:calc(100% + 8px);z-index:50;width:320px;background:var(--navy);border:1px solid var(--line);box-shadow:0 20px 50px rgba(0,0,0,.5);padding:8px}
+.dl-note{font-family:var(--mono);font-size:11px;letter-spacing:.08em;color:var(--mute);text-transform:uppercase;padding:8px 10px}
+.dl-menu a{display:flex;flex-direction:column;gap:2px;padding:10px;text-decoration:none;color:var(--cream);border-left:3px solid transparent}
+.dl-menu a:hover,.dl-menu a:focus-visible{background:var(--card);border-left-color:var(--coral)}
+.dl-menu b{font-family:var(--head);font-weight:400;font-size:22px;letter-spacing:.02em;text-transform:uppercase}
+.dl-menu span{font-family:var(--mono);font-size:11px;color:var(--mute);letter-spacing:.04em}
+@media (max-width:760px){.head-right{width:100%;justify-content:space-between;align-items:center}.dl-menu{width:min(320px,calc(100vw - 48px))}}
+
 /* Present-live link */
 .live{font-family:var(--mono);font-weight:700;font-size:12px;letter-spacing:.12em;text-transform:uppercase;color:var(--cyan);text-decoration:none;border:1px solid var(--cyan);padding:10px 12px;white-space:nowrap}
 .live:hover{background:var(--cyan);color:var(--ink)}
@@ -141,7 +156,22 @@ body.no-scroll{overflow:hidden}
       <h1>Octopuses are aliens</h1>
       <div class="byline">An investigation by Megan</div>
     </div>
-    <p class="disclaimer">Every fact is real and sourced below. Every conclusion is not.</p>
+    <div class="head-right">
+      <p class="disclaimer">Every fact is real and sourced below. Every conclusion is not.</p>
+      <details class="dl" id="dl">
+        <summary>
+          <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 4v11M7 10l5 5 5-5M5 20h14"/></svg>
+          Download
+        </summary>
+        <div class="dl-menu" role="menu">
+          <p class="dl-note">Zipped. Slides only, no audio.</p>
+          <a role="menuitem" href="downloads/Octopuses-Are-Aliens-PowerPoint.zip" download><b>PowerPoint</b><span>.pptx with speaker notes • 3.3 MB</span></a>
+          <a role="menuitem" href="downloads/Octopuses-Are-Aliens-PDF.zip" download><b>PDF</b><span>19 pages, 16:9 • 3.2 MB</span></a>
+          <a role="menuitem" href="downloads/Octopuses-Are-Aliens-PNG.zip" download><b>PNG images</b><span>19 slides, 1920 × 1080 • 14 MB</span></a>
+          <a role="menuitem" href="downloads/Octopuses-Are-Aliens-Web-Page.zip" download><b>Web page</b><span>Offline .html with notes • 1.5 MB</span></a>
+        </div>
+      </details>
+    </div>
   </header>
 
   <main>
@@ -361,6 +391,12 @@ function wake() {
   deck.addEventListener(ev, () => deck.classList.contains('is-full') && wake(), { passive: true }));
 
 $('fs').addEventListener('click', toggleFull);
+
+// Close the download menu on outside click, Escape, or after choosing a file.
+const dl = $('dl');
+document.addEventListener('click', (e) => { if (dl.open && !dl.contains(e.target)) dl.open = false; });
+dl.addEventListener('keydown', (e) => { if (e.key === 'Escape') { dl.open = false; dl.querySelector('summary').focus(); } });
+dl.querySelectorAll('a').forEach((a) => a.addEventListener('click', () => setTimeout(() => { dl.open = false; }, 100)));
 $('stage').addEventListener('dblclick', toggleFull);
 
 const start = parseInt(location.hash.slice(1), 10);
