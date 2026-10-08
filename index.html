@@ -392,6 +392,23 @@ function wake() {
 
 $('fs').addEventListener('click', toggleFull);
 
+// Present live: open the presenter view in its own window, or bring an
+// already-open one to the front. (A plain target="..." link silently
+// reloads the existing window behind this one, which looks like nothing happened.)
+let presenterWin = null;
+$('live').addEventListener('click', (e) => {
+  e.preventDefault();
+  if (presenterWin && !presenterWin.closed) {
+    presenterWin.focus();
+    sync?.postMessage({ type: 'go', i });
+    return;
+  }
+  const w = Math.min(1280, screen.availWidth), h = Math.min(820, screen.availHeight);
+  presenterWin = window.open(`presenter.html#${i + 1}`, 'octopus-presenter', `popup,width=${w},height=${h}`);
+  if (presenterWin) presenterWin.focus();
+  else location.href = `presenter.html#${i + 1}`; // Pop-up blocked: open it here instead.
+});
+
 // Close the download menu on outside click, Escape, or after choosing a file.
 const dl = $('dl');
 document.addEventListener('click', (e) => { if (dl.open && !dl.contains(e.target)) dl.open = false; });
