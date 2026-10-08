@@ -1,0 +1,284 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Octopuses Are Aliens</title>
+<meta name="description" content="An investigation by Megan into the greatest cover-up in human history. Every fact is real. Every conclusion is not.">
+<meta property="og:title" content="Octopuses Are Aliens">
+<meta property="og:description" content="The evidence is hiding in plain sight. A narrated investigation.">
+<meta property="og:image" content="slides/01-title.webp">
+<link rel="preload" href="fonts/anton-latin-400-normal.woff2" as="font" type="font/woff2" crossorigin>
+<style>
+@font-face{font-family:'Anton';src:url(fonts/anton-latin-400-normal.woff2) format('woff2');font-display:swap}
+@font-face{font-family:'Space Mono';font-weight:400;src:url(fonts/space-mono-latin-400-normal.woff2) format('woff2');font-display:swap}
+@font-face{font-family:'Space Mono';font-weight:700;src:url(fonts/space-mono-latin-700-normal.woff2) format('woff2');font-display:swap}
+@font-face{font-family:'DM Sans';font-weight:400;src:url(fonts/dm-sans-latin-400-normal.woff2) format('woff2');font-display:swap}
+@font-face{font-family:'DM Sans';font-weight:400;font-style:italic;src:url(fonts/dm-sans-latin-400-italic.woff2) format('woff2');font-display:swap}
+@font-face{font-family:'DM Sans';font-weight:700;src:url(fonts/dm-sans-latin-700-normal.woff2) format('woff2');font-display:swap}
+:root{
+  --ink:#06131F; --navy:#0B2130; --card:#123447; --line:#1E4A63;
+  --cream:#F5EDDA; --coral:#FF4D4D; --yellow:#FFD166; --cyan:#39D7E8; --mute:#8FA3B1;
+  --mono:'Space Mono',ui-monospace,monospace; --head:'Anton',Impact,sans-serif; --body:'DM Sans',system-ui,sans-serif;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html{background:var(--ink)}
+body{background:var(--ink);color:var(--cream);font-family:var(--body);line-height:1.5;min-height:100vh}
+a{color:var(--cyan)}
+button{font:inherit;color:inherit;background:none;border:0;cursor:pointer}
+:focus-visible{outline:3px solid var(--yellow);outline-offset:3px}
+.wrap{max-width:1280px;margin:0 auto;padding:0 24px}
+/* Keep slide + player inside one laptop screen. */
+main{max-width:max(680px, calc((100svh - 300px) * 16 / 9));margin:0 auto}
+
+header{padding:24px 0 18px;display:flex;align-items:flex-end;justify-content:space-between;gap:12px 24px;flex-wrap:wrap;max-width:max(680px, calc((100svh - 300px) * 16 / 9));margin:0 auto}
+.eyebrow{font-family:var(--mono);font-weight:700;font-size:12px;letter-spacing:.3em;color:var(--coral);text-transform:uppercase}
+.eyebrow:after{content:"";display:block;width:56px;height:4px;background:var(--coral);margin-top:12px}
+h1{font-family:var(--head);font-weight:400;font-size:clamp(40px,5vw,64px);line-height:.95;text-transform:uppercase;margin-top:14px}
+.byline{font-family:var(--mono);font-size:13px;color:var(--mute);margin-top:10px}
+.disclaimer{font-family:var(--mono);font-size:12px;letter-spacing:.08em;color:var(--mute);max-width:340px;text-align:right;text-transform:uppercase}
+
+/* Stage */
+.stage{position:relative;aspect-ratio:16/9;background:var(--navy);border:1px solid var(--line);overflow:hidden}
+.stage img{position:absolute;inset:0;width:100%;height:100%;object-fit:contain;transition:opacity .25s ease}
+.stage img.loading{opacity:.35}
+.nav{position:absolute;top:0;bottom:0;width:14%;display:flex;align-items:center;opacity:0;transition:opacity .2s}
+.nav.prev{left:0;justify-content:flex-start;padding-left:14px}
+.nav.next{right:0;justify-content:flex-end;padding-right:14px}
+.stage:hover .nav,.nav:focus-visible{opacity:1}
+.nav span{display:grid;place-items:center;width:52px;height:52px;background:rgba(6,19,31,.75);border:1px solid var(--line);font-family:var(--mono);font-size:22px}
+.nav[disabled]{display:none}
+.tag{position:absolute;top:14px;right:14px;font-family:var(--mono);font-weight:700;font-size:11px;letter-spacing:.2em;padding:6px 10px;background:var(--cyan);color:var(--ink);text-transform:uppercase}
+.tag[hidden]{display:none}
+
+/* Player */
+.player{display:grid;grid-template-columns:auto 1fr auto;align-items:center;gap:18px;background:var(--navy);border:1px solid var(--line);border-top:0;padding:14px 18px}
+.play{display:flex;align-items:center;gap:12px;font-family:var(--mono);font-weight:700;font-size:13px;letter-spacing:.12em;text-transform:uppercase;padding:10px 16px 10px 12px;background:var(--coral);color:var(--ink)}
+.play svg{width:18px;height:18px;fill:currentColor}
+.play[aria-pressed="true"]{background:var(--yellow)}
+.track{display:flex;flex-direction:column;gap:6px;min-width:0}
+.now{font-family:var(--mono);font-size:12px;letter-spacing:.08em;color:var(--mute);text-transform:uppercase;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.now b{color:var(--cream);font-weight:700}
+.bar{position:relative;height:6px;background:var(--card);cursor:pointer}
+.bar i{position:absolute;left:0;top:0;bottom:0;width:0;background:var(--coral)}
+.right{display:flex;align-items:center;gap:18px}
+.time{font-family:var(--mono);font-size:12px;color:var(--mute);font-variant-numeric:tabular-nums;min-width:92px;text-align:right}
+.toggle{display:flex;align-items:center;gap:10px;font-family:var(--mono);font-size:12px;letter-spacing:.1em;text-transform:uppercase;color:var(--mute)}
+.toggle .sw{width:40px;height:22px;border-radius:11px;background:var(--card);border:1px solid var(--line);position:relative;transition:background .2s}
+.toggle .sw:after{content:"";position:absolute;left:2px;top:2px;width:16px;height:16px;border-radius:50%;background:var(--mute);transition:transform .2s,background .2s}
+.toggle[aria-checked="true"]{color:var(--cream)}
+.toggle[aria-checked="true"] .sw{background:var(--coral)}
+.toggle[aria-checked="true"] .sw:after{transform:translateX(18px);background:var(--cream)}
+
+/* Transcript */
+details.transcript{background:var(--navy);border:1px solid var(--line);border-top:0}
+details.transcript summary{list-style:none;cursor:pointer;padding:12px 18px;font-family:var(--mono);font-size:12px;letter-spacing:.14em;color:var(--cyan);text-transform:uppercase}
+details.transcript summary::-webkit-details-marker{display:none}
+details.transcript summary:before{content:"+ "}
+details.transcript[open] summary:before{content:"– "}
+details.transcript p{padding:0 18px 18px;font-size:17px;max-width:880px;color:#C9D6DE;font-style:italic}
+
+/* Thumbs */
+.counter{display:flex;justify-content:space-between;align-items:baseline;margin:28px 0 12px}
+.counter h2{font-family:var(--mono);font-weight:700;font-size:12px;letter-spacing:.3em;color:var(--coral);text-transform:uppercase}
+.counter span{font-family:var(--mono);font-size:12px;color:var(--mute)}
+.thumbs{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:10px;list-style:none}
+.thumbs button{display:block;width:100%;text-align:left;border:2px solid transparent;background:var(--navy);position:relative}
+.thumbs img{display:block;width:100%;aspect-ratio:16/9;object-fit:cover;opacity:.7;transition:opacity .2s}
+.thumbs button:hover img,.thumbs button[aria-current="true"] img{opacity:1}
+.thumbs button[aria-current="true"]{border-color:var(--coral)}
+.thumbs .n{position:absolute;left:6px;top:6px;font-family:var(--mono);font-size:10px;font-weight:700;padding:2px 5px;background:rgba(6,19,31,.85)}
+.thumbs .lab .n{background:var(--cyan);color:var(--ink)}
+.thumbs .cap{display:block;font-family:var(--mono);font-size:10px;letter-spacing:.06em;color:var(--mute);padding:6px 6px 7px;text-transform:uppercase;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+
+/* Sources */
+section.sources{margin:56px 0 0;padding:36px 0 56px;border-top:1px solid var(--line);display:grid;grid-template-columns:1fr 1fr;gap:40px}
+section.sources h2{font-family:var(--head);font-weight:400;font-size:36px;text-transform:uppercase;margin-bottom:14px}
+section.sources ol{padding-left:20px;display:grid;gap:8px;font-size:15px;color:#C9D6DE}
+section.sources p{font-size:15px;color:#C9D6DE;margin-bottom:10px}
+.kbd{font-family:var(--mono);font-size:12px;padding:1px 6px;border:1px solid var(--line);background:var(--navy)}
+
+@media (max-width:760px){
+  .disclaimer{text-align:left}
+  .tag,.counter>span{display:none}
+  .nav{opacity:.75}
+  .player{grid-template-columns:1fr;gap:12px}
+  .right{justify-content:space-between}
+  .nav{opacity:1;width:18%}
+  .nav span{width:40px;height:40px}
+  section.sources{grid-template-columns:1fr}
+}
+@media (prefers-reduced-motion:reduce){*{transition:none!important}}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header>
+    <div>
+      <div class="eyebrow">Case file 08 • Classified</div>
+      <h1>Octopuses are aliens</h1>
+      <div class="byline">An investigation by Megan</div>
+    </div>
+    <p class="disclaimer">Every fact is real and sourced below. Every conclusion is not.</p>
+  </header>
+
+  <main>
+    <div class="stage" id="stage">
+      <img id="slide" alt="" width="1920" height="1080">
+      <span class="tag" id="tag" hidden>Lab report</span>
+      <button class="nav prev" id="prev" aria-label="Previous slide"><span aria-hidden="true">←</span></button>
+      <button class="nav next" id="next" aria-label="Next slide"><span aria-hidden="true">→</span></button>
+    </div>
+
+    <div class="player" role="group" aria-label="Narration">
+      <button class="play" id="play" aria-pressed="false">
+        <svg viewBox="0 0 24 24" aria-hidden="true"><path id="icon" d="M7 4v16l13-8z"/></svg>
+        <span id="playLabel">Play narration</span>
+      </button>
+      <div class="track">
+        <div class="now"><b id="num">01</b> / <span id="total">19</span> &nbsp;•&nbsp; <span id="ttl"></span></div>
+        <div class="bar" id="bar" role="slider" aria-label="Narration position" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0" tabindex="0"><i id="fill"></i></div>
+      </div>
+      <div class="right">
+        <span class="time" id="time">0:00 / 0:00</span>
+        <button class="toggle" id="auto" role="switch" aria-checked="false"><span class="sw" aria-hidden="true"></span>Auto-play deck</button>
+      </div>
+    </div>
+
+    <details class="transcript" id="transcript">
+      <summary>Narration transcript</summary>
+      <p id="script"></p>
+    </details>
+
+    <div class="counter"><h2>All exhibits</h2><span><span class="kbd">←</span> <span class="kbd">→</span> navigate &nbsp; <span class="kbd">space</span> narration &nbsp; <span class="kbd">f</span> fullscreen</span></div>
+    <ol class="thumbs" id="thumbs"></ol>
+    <audio id="audio" preload="none"></audio>
+  </main>
+
+  <section class="sources" aria-labelledby="src-h">
+    <div>
+      <h2 id="src-h">The sources</h2>
+      <ol>
+        <li><a href="https://news.uchicago.edu/story/landmark-sequencing-octopus-genome-shows-basis-intelligence-camouflage">Octopus genome, Nature 2015</a> (University of Chicago News)</li>
+        <li><a href="https://news.uchicago.edu/story/smart-cephalopods-adapt-editing-genetic-code-sacrifice-ability-evolve">RNA editing in cephalopods, Cell 2017</a> (University of Chicago News)</li>
+        <li><a href="https://www.smithsonianmag.com/science-nature/ten-wild-facts-about-octopuses-they-have-three-hearts-big-brains-and-blue-blood-7625828/">Ten Wild Facts About Octopuses</a> (Smithsonian Magazine): hearts, blood, arms, fossils</li>
+        <li><a href="https://pubmed.ncbi.nlm.nih.gov/20563906/">Octopuses recognize individual humans</a> (Anderson et al., 2010)</li>
+        <li><a href="https://www.foxla.com/news/octopus-named-inky-makes-wild-escape-from-aquarium-slips-down-drain-pipe-to-ocean">Inky's escape, 2016</a> (FOX 11 Los Angeles)</li>
+        <li><a href="https://iho.int/en/global-seabed-mapping-reaches-new-milestone-as-five-million-square-kilometres-added-in-a-year">28.7% of the seafloor mapped, April 2026</a> (IHO / Seabed 2030)</li>
+        <li><a href="https://www.sciencealert.com/a-weird-paper-tests-the-limits-of-science-by-claiming-octopuses-came-from-space">The 2018 "octopuses from space" paper</a> (ScienceAlert)</li>
+      </ol>
+    </div>
+    <div>
+      <h2>Fine print</h2>
+      <p>Rounded reference figures not from the sources above: horseshoe crabs at about 450 million years, about 20,000 human genes, and a shared ancestor more than 500 million years ago.</p>
+      <p>The narration is a synthetic voice (Kokoro text-to-speech, voice "bm_george", Apache-2.0 model) written in the style of a nature documentary. It is not any real person's voice.</p>
+      <p>Slides marked <b>Lab report</b> were added to the original deck.</p>
+    </div>
+  </section>
+</div>
+
+<script>
+const SLIDES = [{"id": "01-title", "title": "Octopuses Are Aliens", "alt": "Title slide: OCTOPUSES ARE ALIENS. The evidence is hiding in plain sight. An investigation by Megan. Close-up of an octopus eye.", "narration": "The ocean. Vast. Dark. And, for the most part, unseen. Here, in the deep, lives a creature so strange that some have begun to ask an uncomfortable question. What follows is an investigation. The evidence, we are told, is hiding in plain sight."}, {"id": "02-official-story", "title": "The Official Story", "alt": "What scientists want us to believe: 1, marine invertebrates. 2, highly intelligent. 3, products of evolution. 4, completely normal.", "narration": "The official story is reassuring. Octopuses, we are told, are marine invertebrates. Highly intelligent. Products of evolution. And completely normal. An animal with three hearts, blue blood, eight arms, and no bones. Completely normal. Let us examine that claim."}, {"id": "03-three-hearts", "title": "Exhibit A: Three Hearts", "alt": "Exhibit A: 3 hearts versus 1. Two pump blood through the gills, one pumps it through the body. Backup systems.", "narration": "Consider the heart. You have one. The octopus has three. Two push blood through the gills. The third sends it around the body. A remarkable system of redundancy, perfectly suited to a long mission far from home. And yet, when the octopus swims, that third heart simply stops. Which is why it much prefers to crawl. Three hearts, it seems. And nobody tested swim mode."}, {"id": "04-blue-blood", "title": "Exhibit B: Blue Blood", "alt": "Exhibit B: Why is their blood blue? Us: iron-based. Them: copper-based hemocyanin. Alien blood.", "narration": "Your blood is red, because it carries oxygen using iron. The octopus does things differently. Its blood uses copper, in a protein called hemocyanin, and it runs blue. Scientists explain that this works better in cold water with little oxygen. A tidy explanation. Produced, one notes, remarkably quickly. The horseshoe crab has blue blood too. It has been around for some four hundred and fifty million years. Watching."}, {"id": "05-lab-genome", "title": "Lab Report 01: The Genome", "alt": "Lab report 01: The genome is weird. 33,000-plus protein-coding genes versus about 20,000 in humans. 168 genes that wire neurons. 1,800 zinc-finger genes. Quote: Our paper describes the first sequenced genome from an alien, Clifton Ragsdale, Nature 2015.", "narration": "In 2015, scientists read the complete genetic code of the octopus for the first time. And the lead researcher described it, in his own words, as the first sequenced genome... from an alien. The numbers were unexpected. More than thirty three thousand genes that build proteins. A human makes do with about twenty thousand. One hundred and sixty eight genes for wiring nerve cells. Some eighteen hundred of another kind, the second largest gene family yet found in any animal. It would appear the octopus packed for a long stay."}, {"id": "06-lab-rna", "title": "Lab Report 02: RNA Editing", "alt": "Lab report 02: They edit their own code. Over 60 percent of squid brain RNA transcripts are recoded by editing, versus under 1 percent in humans. Hotfix in production.", "narration": "In nearly every animal on Earth, the instructions written in DNA are copied faithfully into RNA. In humans, only a tiny fraction of one percent is ever edited afterwards. But in the brain of the squid, more than sixty percent. The octopus is much the same. Rather than wait for evolution to deliver an update, these animals rewrite their own instructions as they go. A risky strategy. Patching, as it were, in production."}, {"id": "07-shapeshifting", "title": "Exhibit C: Shapeshifting", "alt": "Exhibit C: Camouflage? Or shapeshifting? Color, pattern, texture, full appearance. Today I look like a rock. Tomorrow, Kevin from Accounting.", "narration": "In an instant, the octopus can become a rock. A patch of weed. A shadow on the sand. Its skin shifts color, pattern and texture at will. We are told this is camouflage. But one cannot help but wonder whether it is, in fact, practice. Today, a rock. And one day... Kevin, from Accounting."}, {"id": "08-intelligence", "title": "Exhibit D: Way Too Smart", "alt": "Exhibit D: Way. Too. Smart. Solve puzzles, open containers, escape tanks, recognize people, use tools, learn by watching. They're gathering intelligence.", "narration": "The octopus solves puzzles. It opens containers. It escapes from tanks, uses tools, and learns by watching others. And it remembers faces. In 2010, researchers introduced eight giant Pacific octopuses to two strangers. One brought food. The other, a bristly stick. Within two weeks, the octopuses could tell them apart. They are not simply clever. They are, it seems, gathering intelligence."}, {"id": "09-lab-arms", "title": "Lab Report 03: The Brain Isn't in the Head", "alt": "Lab report 03: The brain isn't in the head. Two-thirds of neurons are in the arms. Arms work alone; amputated arms still react. Distributed architecture, zero meetings.", "narration": "Where does an octopus keep its mind? Not, it turns out, in its head. Two thirds of its nerve cells are in its arms. One arm may prise open a shellfish while the rest of the animal attends to other business entirely. Even an arm that has been removed will still respond when touched. A distributed system. No central command. And, mercifully, no meetings."}, {"id": "10-no-bones", "title": "Exhibit E: No Bones", "alt": "Exhibit E: No bones. No problem. An octopus squeezing out of a porthole in a shipwreck.", "narration": "The octopus has no skeleton. No bones at all. And so it can pass through gaps that seem impossible. In 2016, at the National Aquarium of New Zealand, an octopus named Inky slipped from his tank, crossed the floor, and vanished down a drain pipe six inches wide. Straight to the open sea. He left no note."}, {"id": "11-ocean", "title": "Exhibit F: Where Would an Alien Hide?", "alt": "Exhibit F: Where would an alien hide? Space: no. Desert: no. Ocean: yes. Vast, unexplored, inaccessible, full of creatures we already call weird.", "narration": "If one wished to hide on this planet, where would one go? Space is watched by telescopes. The deserts, by satellites. But the ocean is different. As of this year, humans have mapped barely twenty nine percent of the sea floor in any detail. The rest remains, quite literally, uncharted. For a creature that wished to remain unseen, there could be no better address."}, {"id": "12-timeline", "title": "Exhibit G: The Timeline", "alt": "Exhibit G: The timeline is suspicious. Ancient cephalopods, humans, technology, cameras, octopus interested. They waited until we developed technology. Why?", "narration": "Consider the timeline. Three hundred and thirty million years ago, the earliest known relative of the octopus drifted through ancient seas. Humans would not appear for a very, very long time. Then, in a geological blink, we arrived. We invented technology. We invented cameras. And now, the octopus appears to have taken a sudden interest in us. Perhaps it was simply waiting for us to become useful."}, {"id": "13-lab-peer-review", "title": "Lab Report 04: Peer-Reviewed*", "alt": "Lab report 04: Peer-reviewed, with an asterisk. A 2018 paper with 33 authors suggested cryopreserved squid or octopus eggs arrived in icy bolides. Octopus eggs found in comets: zero. Then widely rejected.", "narration": "This theory is not entirely without precedent. In 2018, thirty three scientists published a paper suggesting that frozen squid or octopus eggs may have reached Earth aboard icy comets. The idea, they wrote, should not be discounted. The wider scientific community discounted it almost immediately. And the number of octopus eggs ever recovered from a comet remains, to this day, exactly zero."}, {"id": "14-evidence-board", "title": "The Evidence Board", "alt": "The evidence board: 3 hearts, alien engineering. Blue blood, alien biology. Intelligence, data gathering. Camouflage, stealth tech. The ocean, perfect cover. All connected to the octopus. It's all connected.", "narration": "And so, the evidence. Three hearts. Alien engineering. Blue blood. Alien biology. Intelligence. Data gathering. Camouflage. Stealth technology. And the ocean. The perfect cover. Each, on its own, merely curious. But pinned to the board and joined with red string, a pattern begins to emerge. At its centre, the octopus. It is, one must conclude, all connected."}, {"id": "15-spaceship", "title": "Where Is Their Spaceship?", "alt": "One last question: Where is their spaceship? A spaceship in a nebula.", "narration": "But a careful observer must ask one final question. If the octopus is from elsewhere, where is its spaceship? We have searched the skies. The deserts. Even the Moon. And found nothing. Perhaps, then, we have been asking the wrong question. We have assumed that any alien must have arrived from space. But what if it didn't?"}, {"id": "16-final-theory", "title": "The Final Theory", "alt": "The final theory: They didn't come to Earth. They evolved here. The octopus isn't hiding from us. It's hiding in plain sight. The perfect alien doesn't look like an alien.", "narration": "Perhaps the octopus did not come to Earth at all. Perhaps it evolved here. Right under our noses. The octopus is not hiding from us. It is hiding in plain sight. Because the perfect alien, of course, would not look like an alien."}, {"id": "17-lab-reality", "title": "Lab Report 05: The Real Answer Is Weirder", "alt": "Lab report 05: The real answer is weirder. 500-plus million years since octopuses and humans shared an ancestor. The octopus built its nervous system on its own. No spaceship required. Earth ran the experiment twice.", "narration": "And here, the truth is stranger than any theory. Our last common ancestor with the octopus lived more than five hundred million years ago. A small and simple creature, with nothing resembling a brain. Since then, the octopus has built its remarkable mind entirely on its own. Different design. Different wiring. If we ever meet an alien intelligence, it may well look a great deal like this one. No spaceship was required. The Earth, it seems, simply ran the experiment twice."}, {"id": "18-verdict", "title": "The Verdict", "alt": "The verdict: Are octopuses aliens? Three hearts: high. Blue blood: high. Eight arms: very suspicious. Shapeshifting: extremely suspicious. Intelligence: extremely suspicious. Unexplored ocean: very concerning. No spaceship: unresolved.", "narration": "So. Are octopuses aliens? The evidence has been weighed. Three hearts. High. Blue blood. High. Eight arms. Very suspicious. Shapeshifting, and intelligence. Extremely suspicious. The unexplored ocean. Very concerning. And the spaceship... unresolved. The verdict, delivered with absolutely no scientific method whatsoever, is... probably."}, {"id": "19-thank-you", "title": "Thank You", "alt": "Thank you for listening. An octopus watches from the dark.", "narration": "Thank you for listening. Or should we say... thank you for watching. Because somewhere in the dark below, so are they."}];
+const $ = (id) => document.getElementById(id);
+const audio = $('audio'), img = $('slide');
+let i = 0, auto = false;
+
+const pad = (n) => String(n).padStart(2, '0');
+const fmt = (s) => isFinite(s) ? `${Math.floor(s / 60)}:${pad(Math.floor(s % 60))}` : '0:00';
+const isLab = (s) => s.id.includes('-lab-');
+
+// Thumbnails
+$('total').textContent = pad(SLIDES.length);
+SLIDES.forEach((s, n) => {
+  const li = document.createElement('li');
+  li.innerHTML = `<button class="${isLab(s) ? 'lab' : ''}" aria-label="Slide ${n + 1}: ${s.title}"><img loading="lazy" src="slides/thumbs/${s.id}.webp" alt=""><span class="n">${pad(n + 1)}</span><span class="cap">${s.title}</span></button>`;
+  li.firstChild.addEventListener('click', () => go(n, playing()));
+  $('thumbs').appendChild(li);
+});
+
+function playing() { return !audio.paused && !audio.ended; }
+
+function setPlayUI(on) {
+  $('play').setAttribute('aria-pressed', on);
+  $('playLabel').textContent = on ? 'Pause narration' : 'Play narration';
+  $('icon').setAttribute('d', on ? 'M6 4h4v16H6zM14 4h4v16h-4z' : 'M7 4v16l13-8z');
+}
+
+function go(n, keepPlaying = false) {
+  if (n < 0 || n >= SLIDES.length) return;
+  i = n;
+  const s = SLIDES[i];
+  img.classList.add('loading');
+  img.onload = () => img.classList.remove('loading');
+  img.src = `slides/${s.id}.webp`;
+  img.alt = s.alt;
+  $('tag').hidden = !isLab(s);
+  $('num').textContent = pad(i + 1);
+  $('ttl').textContent = s.title;
+  $('script').textContent = s.narration;
+  $('prev').disabled = i === 0;
+  $('next').disabled = i === SLIDES.length - 1;
+  document.querySelectorAll('.thumbs button').forEach((b, k) => b.setAttribute('aria-current', k === i));
+  audio.src = `audio/${s.id}.mp3`;
+  $('fill').style.width = '0%';
+  $('time').textContent = '0:00 / 0:00';
+  if (keepPlaying) audio.play().catch(() => setPlayUI(false)); else setPlayUI(false);
+  history.replaceState(null, '', `#${i + 1}`);
+  // Preload the next slide image.
+  if (SLIDES[i + 1]) new Image().src = `slides/${SLIDES[i + 1].id}.webp`;
+}
+
+$('play').addEventListener('click', () => playing() ? audio.pause() : audio.play());
+audio.addEventListener('play', () => setPlayUI(true));
+audio.addEventListener('pause', () => setPlayUI(false));
+audio.addEventListener('timeupdate', () => {
+  const p = audio.duration ? (audio.currentTime / audio.duration) * 100 : 0;
+  $('fill').style.width = p + '%';
+  $('bar').setAttribute('aria-valuenow', Math.round(p));
+  $('time').textContent = `${fmt(audio.currentTime)} / ${fmt(audio.duration)}`;
+});
+audio.addEventListener('ended', () => {
+  setPlayUI(false);
+  if (auto && i < SLIDES.length - 1) setTimeout(() => go(i + 1, true), 900);
+});
+$('bar').addEventListener('click', (e) => {
+  if (!audio.duration) return;
+  const r = e.currentTarget.getBoundingClientRect();
+  audio.currentTime = ((e.clientX - r.left) / r.width) * audio.duration;
+});
+$('bar').addEventListener('keydown', (e) => {
+  if (!audio.duration) return;
+  if (e.key === 'ArrowRight') { audio.currentTime = Math.min(audio.duration, audio.currentTime + 5); e.preventDefault(); e.stopPropagation(); }
+  if (e.key === 'ArrowLeft') { audio.currentTime = Math.max(0, audio.currentTime - 5); e.preventDefault(); e.stopPropagation(); }
+});
+$('auto').addEventListener('click', () => {
+  auto = !auto;
+  $('auto').setAttribute('aria-checked', auto);
+  if (auto && !playing()) audio.play();
+});
+$('prev').addEventListener('click', () => go(i - 1, playing()));
+$('next').addEventListener('click', () => go(i + 1, playing()));
+
+document.addEventListener('keydown', (e) => {
+  if (e.target.closest('summary, input, textarea')) return;
+  if (e.key === 'ArrowRight') go(i + 1, playing());
+  else if (e.key === 'ArrowLeft') go(i - 1, playing());
+  else if (e.key === ' ' && !e.target.closest('button')) { e.preventDefault(); $('play').click(); }
+  else if (e.key === 'f') { const st = $('stage'); document.fullscreenElement ? document.exitFullscreen() : st.requestFullscreen?.(); }
+});
+
+// Swipe on touch screens.
+let x0 = null;
+$('stage').addEventListener('touchstart', (e) => { x0 = e.touches[0].clientX; }, { passive: true });
+$('stage').addEventListener('touchend', (e) => {
+  if (x0 === null) return;
+  const dx = e.changedTouches[0].clientX - x0;
+  if (Math.abs(dx) > 50) go(i + (dx < 0 ? 1 : -1), playing());
+  x0 = null;
+});
+
+const start = parseInt(location.hash.slice(1), 10);
+go(Number.isInteger(start) ? Math.min(Math.max(start - 1, 0), SLIDES.length - 1) : 0);
+</script>
+</body>
+</html>
