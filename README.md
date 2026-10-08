@@ -12,9 +12,17 @@ Open `index.html` through GitHub Pages: **Settings → Pages → Deploy from a b
 
 | Key | Action |
 | --- | --- |
-| `←` / `→` | Previous / next slide |
+| `←` / `→`, `PgUp` / `PgDn` | Previous / next slide (works with presentation clickers) |
 | `Space` | Play or pause narration |
-| `F` | Full screen |
+| `F` or the ⛶ button | Full screen. Controls hide after 2.5 seconds; move the mouse to bring them back. Double-click the slide also works. |
+
+## Perform it live
+
+1. Open the page and click **Present live**. The presenter view opens in a second window.
+2. Drag the audience window (`index.html`) to the projector or TV and press `F` for full screen.
+3. Read from the presenter view on your laptop. It shows the script one sentence per line, red **pause** cues for the dramatic beats, the current and next slide, and a timer with a target time per slide.
+
+Advancing in either window moves both. In the presenter view: `T` starts or pauses the timer, `R` resets it, and `+` / `−` change the script size.
 
 Swipe works on phones. Link to a specific slide with `#N`, for example `index.html#5`.
 
@@ -22,7 +30,11 @@ Swipe works on phones. Link to a specific slide with `#N`, for example `index.ht
 
 - `slides/`: 19 slides as WebP, plus thumbnails. Slides tagged **Lab report** (5, 6, 9, 13, 17) were added to Megan's original 14.
 - `audio/`: one MP3 narration per slide.
-- `index.html`: the viewer. No build step, no dependencies.
+- `index.html`: the viewer.
+- `presenter.html`: the presenter view with the live script and timer.
+- `slides.js`: the slide list and narration script, shared by both pages. Edit the script here.
+
+No build step, no dependencies.
 
 ## Credits
 

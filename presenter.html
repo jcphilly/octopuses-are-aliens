@@ -1,0 +1,238 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Presenter View · Octopuses Are Aliens</title>
+<meta name="robots" content="noindex">
+<style>
+@font-face{font-family:'Anton';src:url(fonts/anton-latin-400-normal.woff2) format('woff2');font-display:swap}
+@font-face{font-family:'Space Mono';font-weight:400;src:url(fonts/space-mono-latin-400-normal.woff2) format('woff2');font-display:swap}
+@font-face{font-family:'Space Mono';font-weight:700;src:url(fonts/space-mono-latin-700-normal.woff2) format('woff2');font-display:swap}
+@font-face{font-family:'DM Sans';font-weight:400;src:url(fonts/dm-sans-latin-400-normal.woff2) format('woff2');font-display:swap}
+@font-face{font-family:'DM Sans';font-weight:400;font-style:italic;src:url(fonts/dm-sans-latin-400-italic.woff2) format('woff2');font-display:swap}
+@font-face{font-family:'DM Sans';font-weight:700;src:url(fonts/dm-sans-latin-700-normal.woff2) format('woff2');font-display:swap}
+:root{
+  --ink:#06131F; --navy:#0B2130; --card:#123447; --line:#1E4A63;
+  --cream:#F5EDDA; --coral:#FF4D4D; --yellow:#FFD166; --cyan:#39D7E8; --mute:#8FA3B1;
+  --mono:'Space Mono',ui-monospace,monospace; --head:'Anton',Impact,sans-serif; --body:'DM Sans',system-ui,sans-serif;
+  --script:34px;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html,body{height:100%}
+body{background:var(--ink);color:var(--cream);font-family:var(--body);display:grid;grid-template-rows:auto 1fr auto;overflow:hidden}
+button,a{font:inherit;color:inherit}
+button{background:none;border:0;cursor:pointer}
+:focus-visible{outline:3px solid var(--yellow);outline-offset:2px}
+.mono{font-family:var(--mono);text-transform:uppercase;letter-spacing:.12em}
+
+/* Top bar */
+.top{display:flex;align-items:center;gap:20px;padding:14px 24px;border-bottom:1px solid var(--line);background:var(--navy);flex-wrap:wrap}
+.label{font-family:var(--mono);font-weight:700;font-size:12px;letter-spacing:.3em;color:var(--coral);text-transform:uppercase}
+.where{font-family:var(--mono);font-size:13px;color:var(--mute);text-transform:uppercase;letter-spacing:.08em;flex:1;min-width:200px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.where b{color:var(--cream)}
+.clock{display:flex;align-items:center;gap:14px}
+.t{font-family:var(--mono);font-variant-numeric:tabular-nums;text-align:right;line-height:1.2}
+.t big{display:block;font-size:30px;font-weight:700;color:var(--cream)}
+.t small{font-size:11px;color:var(--mute);letter-spacing:.1em;text-transform:uppercase}
+.t.over big{color:var(--coral)}
+.btn{font-family:var(--mono);font-weight:700;font-size:12px;letter-spacing:.12em;text-transform:uppercase;padding:9px 12px;border:1px solid var(--line);background:var(--card)}
+.btn:hover{border-color:var(--cream)}
+.btn.on{background:var(--yellow);color:var(--ink);border-color:var(--yellow)}
+.btn.primary{background:var(--coral);color:var(--ink);border-color:var(--coral)}
+.sizes{display:flex;gap:4px}
+
+/* Body */
+.main{display:grid;grid-template-columns:minmax(0,1.6fr) minmax(280px,1fr);min-height:0}
+.script{overflow-y:auto;padding:36px 48px 120px;scroll-behavior:smooth}
+.script h2{font-family:var(--head);font-weight:400;font-size:44px;text-transform:uppercase;line-height:1;margin-bottom:8px}
+.script .meta{font-family:var(--mono);font-size:12px;letter-spacing:.14em;color:var(--mute);text-transform:uppercase;margin-bottom:28px}
+.script p{font-size:var(--script);line-height:1.55;margin-bottom:.55em;max-width:34em}
+.script .pause{font-family:var(--mono);font-size:.5em;letter-spacing:.14em;color:var(--coral);vertical-align:middle;padding:0 .4em;white-space:nowrap}
+.script .end{font-family:var(--mono);font-size:13px;letter-spacing:.14em;color:var(--cyan);text-transform:uppercase;margin-top:28px}
+.side{border-left:1px solid var(--line);padding:24px;display:flex;flex-direction:column;gap:18px;overflow-y:auto;background:var(--navy)}
+.side figure{display:flex;flex-direction:column;gap:8px}
+.side figcaption{font-family:var(--mono);font-size:11px;letter-spacing:.2em;color:var(--mute);text-transform:uppercase}
+.side figure.now figcaption{color:var(--coral)}
+.side img{width:100%;aspect-ratio:16/9;object-fit:cover;background:var(--card);border:1px solid var(--line)}
+.side .next img{opacity:.8}
+.tips{font-family:var(--mono);font-size:11px;letter-spacing:.06em;color:var(--mute);line-height:1.9;text-transform:uppercase}
+.tips kbd{font-family:var(--mono);border:1px solid var(--line);padding:0 5px;color:var(--cream);background:var(--card)}
+.sync{font-family:var(--mono);font-size:11px;letter-spacing:.1em;text-transform:uppercase;color:var(--mute)}
+.sync i{display:inline-block;width:8px;height:8px;border-radius:50%;background:var(--mute);margin-right:6px;vertical-align:middle}
+.sync.ok i{background:#4ADE80}
+
+/* Bottom nav */
+.bottom{display:grid;grid-template-columns:1fr 1fr;border-top:1px solid var(--line)}
+.bottom button{padding:16px;font-family:var(--mono);font-weight:700;font-size:14px;letter-spacing:.14em;text-transform:uppercase;background:var(--navy)}
+.bottom button+button{border-left:1px solid var(--line);background:var(--card)}
+.bottom button:hover{color:var(--yellow)}
+.bottom button:disabled{opacity:.35;cursor:default}
+
+@media (max-width:860px){
+  body{overflow:auto;height:auto}
+  .main{grid-template-columns:1fr}
+  .side{border-left:0;border-top:1px solid var(--line);flex-direction:row;flex-wrap:wrap}
+  .side figure{flex:1;min-width:140px}
+  .script{padding:24px 20px 40px}
+  .bottom{position:sticky;bottom:0}
+}
+@media (prefers-reduced-motion:reduce){.script{scroll-behavior:auto}}
+</style>
+</head>
+<body>
+<div class="top">
+  <span class="label">Presenter view</span>
+  <span class="where"><b id="num">01</b> / <span id="total">19</span> &nbsp;•&nbsp; <span id="ttl"></span></span>
+  <div class="clock">
+    <div class="t" id="slideT"><big id="slideTime">0:00</big><small>This slide • target <span id="target">0:00</span></small></div>
+    <div class="t"><big id="totalTime">0:00</big><small>Total • target <span id="totalTarget">0:00</span></small></div>
+    <button class="btn primary" id="timer">Start timer</button>
+    <button class="btn" id="reset" title="Reset timers (R)">Reset</button>
+  </div>
+  <div class="sizes" role="group" aria-label="Script text size">
+    <button class="btn" id="smaller" aria-label="Smaller script text">A−</button>
+    <button class="btn" id="bigger" aria-label="Bigger script text">A+</button>
+  </div>
+  <a class="btn" id="audience" href="index.html" target="octopus-audience">Audience window</a>
+</div>
+
+<div class="main">
+  <article class="script" id="script" aria-live="polite"></article>
+  <aside class="side">
+    <figure class="now"><figcaption>On screen now</figcaption><img id="nowImg" alt=""></figure>
+    <figure class="next"><figcaption id="nextCap">Up next</figcaption><img id="nextImg" alt=""></figure>
+    <p class="sync" id="sync"><i></i><span>Audience window not detected</span></p>
+    <p class="tips">
+      <kbd>→</kbd> <kbd>Space</kbd> <kbd>PgDn</kbd> next &nbsp; <kbd>←</kbd> <kbd>PgUp</kbd> back<br>
+      <kbd>T</kbd> start / pause timer &nbsp; <kbd>R</kbd> reset<br>
+      <kbd>+</kbd> <kbd>−</kbd> text size<br>
+      Red “pause” marks are dramatic beats. Hold them.
+    </p>
+  </aside>
+</div>
+
+<div class="bottom">
+  <button id="prev">← Back</button>
+  <button id="next">Next →</button>
+</div>
+
+<script src="slides.js"></script>
+<script>
+const SLIDES = window.SLIDES;
+const $ = (id) => document.getElementById(id);
+const pad = (n) => String(n).padStart(2, '0');
+const fmt = (s) => `${Math.floor(s / 60)}:${pad(Math.floor(s % 60))}`;
+const WPM = 140; // Comfortable pace for dramatic narration, matching the recorded audio.
+const secsFor = (t) => Math.round(t.split(/\s+/).length / WPM * 60);
+let i = 0;
+
+$('total').textContent = pad(SLIDES.length);
+$('totalTarget').textContent = fmt(SLIDES.reduce((a, s) => a + secsFor(s.narration), 0));
+
+// Script: one sentence per line; "..." becomes a visible pause cue.
+function renderScript(s) {
+  const esc = (t) => t.replace(/[&<>]/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;' }[c]));
+  const sentences = s.narration.match(/[^.?!…]+(?:\.\.\.|[.?!…])+["”]?\s*/g) || [s.narration];
+  const html = [];
+  let line = '';
+  for (const raw of sentences) {
+    const t = raw.trim();
+    // Keep a trailing "..." on the same line, followed by a pause cue.
+    if (t.endsWith('...') || t.endsWith('…')) { line += esc(t.replace(/(\.\.\.|…)$/, '')) + '<span class="pause">… pause …</span> '; continue; }
+    line += esc(t);
+    html.push(`<p>${line}</p>`);
+    line = '';
+  }
+  if (line) html.push(`<p>${line}</p>`);
+  return `<h2>${esc(s.title)}</h2><div class="meta">Slide ${i + 1} of ${SLIDES.length} • about ${fmt(secsFor(s.narration))}</div>${html.join('')}<div class="end">${i < SLIDES.length - 1 ? 'Next: ' + esc(SLIDES[i + 1].title) : 'End of presentation'}</div>`;
+}
+
+// Timers
+let running = false, totalSecs = 0, slideSecs = 0, tick = null;
+function drawTimes() {
+  $('totalTime').textContent = fmt(totalSecs);
+  $('slideTime').textContent = fmt(slideSecs);
+  $('slideT').classList.toggle('over', slideSecs > secsFor(SLIDES[i].narration) + 5);
+}
+function toggleTimer() {
+  running = !running;
+  $('timer').textContent = running ? 'Pause timer' : 'Start timer';
+  $('timer').classList.toggle('on', running);
+  $('timer').classList.toggle('primary', !running);
+  clearInterval(tick);
+  if (running) tick = setInterval(() => { totalSecs++; slideSecs++; drawTimes(); }, 1000);
+}
+function resetTimers() { totalSecs = 0; slideSecs = 0; drawTimes(); }
+
+// Sync with the audience window (index.html) on the same site.
+const sync = 'BroadcastChannel' in window ? new BroadcastChannel('octopus-deck') : null;
+let heard = false;
+function markSynced() {
+  if (heard) return;
+  heard = true;
+  $('sync').classList.add('ok');
+  $('sync').querySelector('span').textContent = 'Synced with audience window';
+}
+
+function go(n, fromRemote = false) {
+  if (n < 0 || n >= SLIDES.length) return;
+  if (n !== i) slideSecs = 0;
+  i = n;
+  const s = SLIDES[i], nx = SLIDES[i + 1];
+  $('num').textContent = pad(i + 1);
+  $('ttl').textContent = s.title;
+  $('target').textContent = fmt(secsFor(s.narration));
+  $('script').innerHTML = renderScript(s);
+  $('script').scrollTop = 0;
+  $('nowImg').src = `slides/thumbs/${s.id}.webp`;
+  $('nowImg').alt = s.alt;
+  $('nextImg').src = nx ? `slides/thumbs/${nx.id}.webp` : '';
+  $('nextImg').alt = nx ? nx.alt : '';
+  $('nextImg').style.visibility = nx ? 'visible' : 'hidden';
+  $('nextCap').textContent = nx ? 'Up next: ' + nx.title : 'Last slide';
+  $('prev').disabled = i === 0;
+  $('next').disabled = i === SLIDES.length - 1;
+  history.replaceState(null, '', `#${i + 1}`);
+  drawTimes();
+  if (!fromRemote) sync?.postMessage({ type: 'go', i });
+}
+
+sync?.addEventListener('message', (e) => {
+  if (e.data?.type === 'go') { markSynced(); if (e.data.i !== i) go(e.data.i, true); }
+});
+
+$('prev').addEventListener('click', () => go(i - 1));
+$('next').addEventListener('click', () => go(i + 1));
+$('timer').addEventListener('click', toggleTimer);
+$('reset').addEventListener('click', resetTimers);
+
+let size = 34;
+try { size = parseInt(localStorage.getItem('octo-script-size'), 10) || 34; } catch (e) {}
+function setSize(px) {
+  size = Math.min(64, Math.max(20, px));
+  document.documentElement.style.setProperty('--script', size + 'px');
+  try { localStorage.setItem('octo-script-size', size); } catch (e) {}
+}
+$('smaller').addEventListener('click', () => setSize(size - 4));
+$('bigger').addEventListener('click', () => setSize(size + 4));
+setSize(size);
+
+document.addEventListener('keydown', (e) => {
+  if (e.metaKey || e.ctrlKey || e.altKey) return;
+  const k = e.key;
+  if (k === 'ArrowRight' || k === 'PageDown' || (k === ' ' && !e.target.closest('button,a'))) { e.preventDefault(); go(i + 1); }
+  else if (k === 'ArrowLeft' || k === 'PageUp') { e.preventDefault(); go(i - 1); }
+  else if (k === 't' || k === 'T') toggleTimer();
+  else if (k === 'r' || k === 'R') resetTimers();
+  else if (k === '+' || k === '=') setSize(size + 4);
+  else if (k === '-' || k === '_') setSize(size - 4);
+});
+
+// Start where the URL says, then ask an open audience window where it is.
+const start = parseInt(location.hash.slice(1), 10);
+go(Number.isInteger(start) ? Math.min(Math.max(start - 1, 0), SLIDES.length - 1) : 0, true);
+sync?.postMessage({ type: 'hello' });
+</script>
+</body>
+</html>
